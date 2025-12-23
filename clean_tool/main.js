@@ -4,6 +4,33 @@ document.addEventListener('DOMContentLoaded', function() {
   const compressBtn = document.getElementById('compressBtn');
   const copyBtn = document.getElementById('copyBtn');
   const statusDiv = document.getElementById('status');
+  const lineNumbers = document.getElementById('lineNumbers');
+
+  // 更新行号
+  function updateLineNumbers() {
+    const lines = jsonInput.value.split('\n');
+    const lineCount = lines.length;
+
+    let numbersHtml = '';
+    for (let i = 1; i <= lineCount; i++) {
+      numbersHtml += '<span>' + i + '</span>';
+    }
+    lineNumbers.innerHTML = numbersHtml;
+  }
+
+  // 同步滚动
+  function syncScroll() {
+    lineNumbers.scrollTop = jsonInput.scrollTop;
+  }
+
+  // 初始化行号
+  updateLineNumbers();
+
+  // 监听输入事件更新行号
+  jsonInput.addEventListener('input', updateLineNumbers);
+
+  // 监听滚动事件同步行号滚动
+  jsonInput.addEventListener('scroll', syncScroll);
 
   // 展开JSON
   expandBtn.addEventListener('click', function() {
@@ -16,6 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       const jsonObject = JSON.parse(jsonString);
       jsonInput.value = JSON.stringify(jsonObject, null, 2);
+      updateLineNumbers();
       showStatus('JSON展开成功');
     } catch (e) {
       showStatus('无效的JSON格式: ' + e.message, true);
@@ -33,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       const jsonObject = JSON.parse(jsonString);
       jsonInput.value = JSON.stringify(jsonObject);
+      updateLineNumbers();
       showStatus('JSON压缩成功');
     } catch (e) {
       showStatus('无效的JSON格式: ' + e.message, true);
